@@ -184,22 +184,18 @@ class _$NoteTagDAO extends NoteTagDAO {
   final QueryAdapter _queryAdapter;
 
   @override
-  Future<List<Tag>> getTagsForNote(int noteId) async {
+  Future<List<NoteTag>> getTagsForNote(int noteId) async {
     return _queryAdapter.queryList('SELECT * FROM NoteTag WHERE note_id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            Tag(row['id'] as int, row['name'] as String),
+        mapper: (Map<String, Object?> row) => NoteTag(
+            row['note_id'] as int, row['tag_id'] as int, row['id'] as int),
         arguments: [noteId]);
   }
 
   @override
-  Future<List<Note>> getNotesForTag(int tagId) async {
+  Future<List<NoteTag>> getNotesForTag(int tagId) async {
     return _queryAdapter.queryList('SELECT * FROM NoteTag WHERE tag_id= ?1',
-        mapper: (Map<String, Object?> row) => Note(
-            row['id'] as int,
-            row['title'] as String,
-            row['content'] as String,
-            _dateTimeConverter.decode(row['created_at'] as int),
-            _dateTimeConverter.decode(row['updated_at'] as int)),
+        mapper: (Map<String, Object?> row) => NoteTag(
+            row['note_id'] as int, row['tag_id'] as int, row['id'] as int),
         arguments: [tagId]);
   }
 }

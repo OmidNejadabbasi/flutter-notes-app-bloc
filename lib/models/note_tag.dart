@@ -24,5 +24,5 @@ class NoteTag {
   @ColumnInfo(name: "tag_id")
   final int tagId;
 
-  NoteTag(this.noteId, this.tagId);
+  NoteTag(this.noteId, this.tagId, this.id);
 }

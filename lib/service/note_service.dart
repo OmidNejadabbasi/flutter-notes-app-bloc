@@ -1,9 +1,9 @@
 
+import 'package:tak_note/db/database.dart';
+
 class NoteService {
-  AppDataBase _db;
-  NoteService(AppDataBase db) {
-
+  late AppDatabase _db;
+  NoteService(AppDatabase db) {
     _db = db;
-
   }
 }
