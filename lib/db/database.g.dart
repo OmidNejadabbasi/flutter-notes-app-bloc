@@ -3,395 +3,128 @@
 part of 'database.dart';
 
 // **************************************************************************
-// MoorGenerator
+// FloorGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class Note extends DataClass implements Insertable<Note> {
-  final int id;
-  final String title;
-  final String content;
-  Note({required this.id, required this.title, required this.content});
-  factory Note.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return Note(
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      title: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
-      content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
-    );
-  }
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['title'] = Variable<String>(title);
-    map['content'] = Variable<String>(content);
-    return map;
-  }
+// ignore: avoid_classes_with_only_static_members
+class $FloorAppDatabase {
+  /// Creates a database builder for a persistent database.
+  /// Once a database is built, you should keep a reference to it and re-use it.
+  static _$AppDatabaseBuilder databaseBuilder(String name) =>
+      _$AppDatabaseBuilder(name);
 
-  NotesCompanion toCompanion(bool nullToAbsent) {
-    return NotesCompanion(
-      id: Value(id),
-      title: Value(title),
-      content: Value(content),
-    );
-  }
-
-  factory Note.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Note(
-      id: serializer.fromJson<int>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-      content: serializer.fromJson<String>(json['content']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'title': serializer.toJson<String>(title),
-      'content': serializer.toJson<String>(content),
-    };
-  }
-
-  Note copyWith({int? id, String? title, String? content}) => Note(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        content: content ?? this.content,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('Note(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('content: $content')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, title, content);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Note &&
-          other.id == this.id &&
-          other.title == this.title &&
-          other.content == this.content);
+  /// Creates a database builder for an in memory database.
+  /// Information stored in an in memory database disappears when the process is killed.
+  /// Once a database is built, you should keep a reference to it and re-use it.
+  static _$AppDatabaseBuilder inMemoryDatabaseBuilder() =>
+      _$AppDatabaseBuilder(null);
 }
 
-class NotesCompanion extends UpdateCompanion<Note> {
-  final Value<int> id;
-  final Value<String> title;
-  final Value<String> content;
-  const NotesCompanion({
-    this.id = const Value.absent(),
-    this.title = const Value.absent(),
-    this.content = const Value.absent(),
-  });
-  NotesCompanion.insert({
-    this.id = const Value.absent(),
-    required String title,
-    required String content,
-  })  : title = Value(title),
-        content = Value(content);
-  static Insertable<Note> custom({
-    Expression<int>? id,
-    Expression<String>? title,
-    Expression<String>? content,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (title != null) 'title': title,
-      if (content != null) 'content': content,
-    });
+class _$AppDatabaseBuilder {
+  _$AppDatabaseBuilder(this.name);
+
+  final String? name;
+
+  final List<Migration> _migrations = [];
+
+  Callback? _callback;
+
+  /// Adds migrations to the builder.
+  _$AppDatabaseBuilder addMigrations(List<Migration> migrations) {
+    _migrations.addAll(migrations);
+    return this;
   }
 
-  NotesCompanion copyWith(
-      {Value<int>? id, Value<String>? title, Value<String>? content}) {
-    return NotesCompanion(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      content: content ?? this.content,
+  /// Adds a database [Callback] to the builder.
+  _$AppDatabaseBuilder addCallback(Callback callback) {
+    _callback = callback;
+    return this;
+  }
+
+  /// Creates the database and initializes it.
+  Future<AppDatabase> build() async {
+    final path = name != null
+        ? await sqfliteDatabaseFactory.getDatabasePath(name!)
+        : ':memory:';
+    final database = _$AppDatabase();
+    database.database = await database.open(
+      path,
+      _migrations,
+      _callback,
     );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
-    }
-    if (content.present) {
-      map['content'] = Variable<String>(content.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('NotesCompanion(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('content: $content')
-          ..write(')'))
-        .toString();
+    return database;
   }
 }
 
-class $NotesTable extends Notes with TableInfo<$NotesTable, Note> {
-  final GeneratedDatabase _db;
-  final String? _alias;
-  $NotesTable(this._db, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
-      'id', aliasedName, false,
-      type: const IntType(),
-      requiredDuringInsert: false,
-      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
-  @override
-  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
-      'title', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 128),
-      type: const StringType(),
-      requiredDuringInsert: true);
-  final VerificationMeta _contentMeta = const VerificationMeta('content');
-  @override
-  late final GeneratedColumn<String?> content = GeneratedColumn<String?>(
-      'content', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns => [id, title, content];
-  @override
-  String get aliasedName => _alias ?? 'notes';
-  @override
-  String get actualTableName => 'notes';
-  @override
-  VerificationContext validateIntegrity(Insertable<Note> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
-    }
-    if (data.containsKey('content')) {
-      context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
-    } else if (isInserting) {
-      context.missing(_contentMeta);
-    }
-    return context;
+class _$AppDatabase extends AppDatabase {
+  _$AppDatabase([StreamController<String>? listener]) {
+    changeListener = listener ?? StreamController<String>.broadcast();
+  }
+
+  NoteDAO? _noteDAOInstance;
+
+  Future<sqflite.Database> open(String path, List<Migration> migrations,
+      [Callback? callback]) async {
+    final databaseOptions = sqflite.OpenDatabaseOptions(
+      version: 1,
+      onConfigure: (database) async {
+        await database.execute('PRAGMA foreign_keys = ON');
+        await callback?.onConfigure?.call(database);
+      },
+      onOpen: (database) async {
+        await callback?.onOpen?.call(database);
+      },
+      onUpgrade: (database, startVersion, endVersion) async {
+        await MigrationAdapter.runMigrations(
+            database, startVersion, endVersion, migrations);
+
+        await callback?.onUpgrade?.call(database, startVersion, endVersion);
+      },
+      onCreate: (database, version) async {
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY (`id`))');
+
+        await callback?.onCreate?.call(database, version);
+      },
+    );
+    return sqfliteDatabaseFactory.openDatabase(path, options: databaseOptions);
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Note map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return Note.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
-  }
-
-  @override
-  $NotesTable createAlias(String alias) {
-    return $NotesTable(_db, alias);
+  NoteDAO get noteDAO {
+    return _noteDAOInstance ??= _$NoteDAO(database, changeListener);
   }
 }
 
-class Tag extends DataClass implements Insertable<Tag> {
-  final int id;
-  final String name;
-  Tag({required this.id, required this.name});
-  factory Tag.fromData(Map<String, dynamic> data, {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return Tag(
-      id: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      name: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
-    );
-  }
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    return map;
-  }
+class _$NoteDAO extends NoteDAO {
+  _$NoteDAO(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _noteInsertionAdapter = InsertionAdapter(
+            database,
+            'Note',
+            (Note item) => <String, Object?>{
+                  'id': item.id,
+                  'title': item.title,
+                  'content': item.content
+                });
 
-  TagsCompanion toCompanion(bool nullToAbsent) {
-    return TagsCompanion(
-      id: Value(id),
-      name: Value(name),
-    );
-  }
+  final sqflite.DatabaseExecutor database;
 
-  factory Tag.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Tag(
-      id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-    };
-  }
+  final StreamController<String> changeListener;
 
-  Tag copyWith({int? id, String? name}) => Tag(
-        id: id ?? this.id,
-        name: name ?? this.name,
-      );
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Note> _noteInsertionAdapter;
+
   @override
-  String toString() {
-    return (StringBuffer('Tag(')
-          ..write('id: $id, ')
-          ..write('name: $name')
-          ..write(')'))
-        .toString();
+  Future<List<Note>> getAllNotes() async {
+    return _queryAdapter.queryList('SELECT * FROM Note',
+        mapper: (Map<String, Object?> row) => Note(row['id'] as int,
+            row['title'] as String, row['content'] as String));
   }
 
   @override
-  int get hashCode => Object.hash(id, name);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Tag && other.id == this.id && other.name == this.name);
-}
-
-class TagsCompanion extends UpdateCompanion<Tag> {
-  final Value<int> id;
-  final Value<String> name;
-  const TagsCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-  });
-  TagsCompanion.insert({
-    this.id = const Value.absent(),
-    required String name,
-  }) : name = Value(name);
-  static Insertable<Tag> custom({
-    Expression<int>? id,
-    Expression<String>? name,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-    });
+  Future<void> insertNote(Note note) async {
+    await _noteInsertionAdapter.insert(note, OnConflictStrategy.abort);
   }
-
-  TagsCompanion copyWith({Value<int>? id, Value<String>? name}) {
-    return TagsCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TagsCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
-  final GeneratedDatabase _db;
-  final String? _alias;
-  $TagsTable(this._db, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
-      'id', aliasedName, false,
-      type: const IntType(),
-      requiredDuringInsert: false,
-      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
-  final VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String?> name = GeneratedColumn<String?>(
-      'name', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 40),
-      type: const StringType(),
-      requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns => [id, name];
-  @override
-  String get aliasedName => _alias ?? 'tags';
-  @override
-  String get actualTableName => 'tags';
-  @override
-  VerificationContext validateIntegrity(Insertable<Tag> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Tag map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return Tag.fromData(data,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
-  }
-
-  @override
-  $TagsTable createAlias(String alias) {
-    return $TagsTable(_db, alias);
-  }
-}
-
-abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  late final $NotesTable notes = $NotesTable(this);
-  late final $TagsTable tags = $TagsTable(this);
-  @override
-  Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
-  @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [notes, tags];
 }
