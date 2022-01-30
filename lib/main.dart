@@ -1,67 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:tak_note/bloc/create_note_bloc.dart';
+import 'package:tak_note/db/database.dart';
+import 'package:tak_note/page/create_note_page.dart';
+import 'package:tak_note/routes.dart';
+import 'package:tak_note/service/note_service.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final db = await $FloorAppDatabase.databaseBuilder('notedb.db').build();
+  final noteService = NoteService(db);
+  final blocProvider = BlocProvider(createNoteBloc: CreateNoteBloc(noteService));
+
+  runApp(AppContainer(blocProvider: blocProvider, child: TakeNoteApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class TakeNoteApp extends StatelessWidget {
+  const TakeNoteApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      home: CreateNotePage(),
+      initialRoute: '/create_note',
+      onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  final String title;
+class AppContainer extends StatefulWidget {
+  final Widget child;
+  final BlocProvider blocProvider;
+
+  const AppContainer(
+      {Key? key, required this.blocProvider, required this.child})
+      : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  AppState createState() => AppState();
+
+  static BlocProvider blocProviderOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_InheritedAppState>()!
+        .blocProvider;
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class AppState extends State<AppContainer> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+    return _InheritedAppState(
+      blocProvider: widget.blocProvider,
+      child: widget.child,
     );
   }
+}
+
+class _InheritedAppState extends InheritedWidget {
+  final BlocProvider blocProvider;
+
+  const _InheritedAppState({
+    Key? key,
+    required this.blocProvider,
+    child,
+  }) : super(key: key, child: child);
+
+  @override
+  bool updateShouldNotify(_InheritedAppState oldWidget) {
+    return blocProvider != oldWidget.blocProvider;
+  }
+}
+
+class BlocProvider {
+  final CreateNoteBloc createNoteBloc;
+
+  BlocProvider({required this.createNoteBloc});
 }

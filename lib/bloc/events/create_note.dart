@@ -3,9 +3,19 @@ import 'package:tak_note/models/note.dart';
 
 abstract class NoteEvent {}
 
-class CreateNote extends NoteEvent {
-  final Note note;
+class NoteTitleChanged extends NoteEvent {
 
-  CreateNote(this.note);
+  final String noteTitle;
+
+  NoteTitleChanged(this.noteTitle);
+}
+
+class NoteContentChanged extends NoteEvent{
+  final String noteContent;
+
+  NoteContentChanged(this.noteContent);
+}
+
+class CreateNote extends NoteEvent {
 }
 

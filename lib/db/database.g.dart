@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Tag` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -140,7 +140,7 @@ class _$NoteDAO extends NoteDAO {
   Future<List<Note>> getAllNotes() async {
     return _queryAdapter.queryList('SELECT * FROM Note',
         mapper: (Map<String, Object?> row) => Note(
-            row['id'] as int,
+            row['id'] as int?,
             row['title'] as String,
             row['content'] as String,
             _dateTimeConverter.decode(row['created_at'] as int),
