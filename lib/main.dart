@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tak_note/bloc/create_note_bloc.dart';
 import 'package:tak_note/db/database.dart';
-import 'package:tak_note/page/create_note_page.dart';
-import 'package:tak_note/page/notes_list_page.dart';
 import 'package:tak_note/routes.dart';
 import 'package:tak_note/service/note_service.dart';
 

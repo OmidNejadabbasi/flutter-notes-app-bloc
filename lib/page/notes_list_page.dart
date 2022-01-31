@@ -8,6 +8,7 @@ class NotesListPage extends StatelessWidget {
   NotesListPage({Key? key}) : super(key: key);
 
   NotesListBloc? notesListBloc = null;
+
   @override
   Widget build(BuildContext context) {
     notesListBloc = AppContainer.blocProviderOf(context).notesListBloc;
@@ -25,7 +26,7 @@ class NotesListPage extends StatelessWidget {
                 return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return buildNoteListItem(snapshot.data![index]);
+                    return buildNoteListItem(snapshot.data![index], context);
                   },
                 );
               },
@@ -44,20 +45,62 @@ class NotesListPage extends StatelessWidget {
     );
   }
 
-  Card buildNoteListItem(Note note) {
-    return Card(
-      elevation: 6,
-      child: Column(
-        children: [Text(note.title),
-        Text(note.content),
-        IconButton(
-          onPressed: () {
-            notesListBloc?.noteEventSink.add(DeleteNote(noteId: note.id ?? -1));
-            print("delete noteId ${note.id}");
-          },
-          icon: const Icon(Icons.delete),
-        ),
-      ]
+  Widget buildNoteListItem(Note note, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Color.fromARGB(255, 43, 142, 142)),
+        borderRadius: BorderRadius.all(Radius.circular(9)),
+      ),
+      margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+        child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      note.title,
+                      style: const TextStyle(
+                        fontFamily: 'Josefin',
+                        fontSize: 26,
+                        letterSpacing: -1,
+                        color: Color.fromARGB(255, 66, 66, 66),
+                      ),
+                    ),
+                    Text(
+                      note.content,
+                      style: const TextStyle(
+                        fontFamily: 'Adanda',
+                        color: Color.fromARGB(255, 160, 160, 160),
+                      ),
+                    ),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+              ),
+              Material(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                child: IconButton(
+                  iconSize: 18,
+                  padding: EdgeInsets.all(8),
+                  constraints: BoxConstraints(),
+                  onPressed: () {
+                    notesListBloc?.noteEventSink
+                        .add(DeleteNote(noteId: note.id ?? -1));
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ]),
       ),
     );
   }

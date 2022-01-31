@@ -1,7 +1,6 @@
 
 
 import 'package:floor/floor.dart';
-import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/models/note.dart';
 
 @dao

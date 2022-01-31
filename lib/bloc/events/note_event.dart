@@ -1,5 +1,4 @@
 
-import 'package:tak_note/models/note.dart';
 
 abstract class NoteEvent {}
 
