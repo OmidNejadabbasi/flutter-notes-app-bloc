@@ -11,4 +11,17 @@ class NoteService {
   Future<void> saveNote(Note note){
     return _db.noteDAO.insertNote(note);
   }
+
+  Future<List<Note>> getAllNotes() {
+    return _db.noteDAO.getAllNotes();
+  }
+
+  Stream<List<Note>> getAllNotesAsStream() {
+    return _db.noteDAO.getAllNotesAsStream();
+  }
+
+  void deleteNote(int noteId) {
+    _db.noteDAO.deleteNote(noteId);
+  }
+
 }

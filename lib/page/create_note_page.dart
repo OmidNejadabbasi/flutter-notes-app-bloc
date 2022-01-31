@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tak_note/bloc/events/create_note.dart';
+import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/main.dart';
 
 class CreateNotePage extends StatelessWidget {

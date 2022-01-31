@@ -1,8 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:tak_note/bloc/events/create_note.dart';
 import 'package:tak_note/page/create_note_page.dart';
+import 'package:tak_note/page/notes_list_page.dart';
 
 
 class AppRouter {
@@ -10,6 +10,9 @@ class AppRouter {
     switch(settings.name) {
       case "/create_note":
         return MaterialPageRoute(builder: (context) => const CreateNotePage(),);
+
+      case "/all_notes":
+        return MaterialPageRoute(builder: (context) => NotesListPage());
     }
   }
 }

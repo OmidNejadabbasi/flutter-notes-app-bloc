@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:tak_note/bloc/events/create_note.dart';
+import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/bloc/form_status.dart';
 import 'package:tak_note/models/note.dart';
 import 'package:tak_note/service/note_service.dart';

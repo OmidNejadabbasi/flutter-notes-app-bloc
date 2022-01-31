@@ -116,7 +116,7 @@ class _$AppDatabase extends AppDatabase {
 
 class _$NoteDAO extends NoteDAO {
   _$NoteDAO(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+      : _queryAdapter = QueryAdapter(database, changeListener),
         _noteInsertionAdapter = InsertionAdapter(
             database,
             'Note',
@@ -126,7 +126,8 @@ class _$NoteDAO extends NoteDAO {
                   'content': item.content,
                   'created_at': _dateTimeConverter.encode(item.createdAt),
                   'updated_at': _dateTimeConverter.encode(item.updatedAt)
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -148,8 +149,27 @@ class _$NoteDAO extends NoteDAO {
   }
 
   @override
+  Stream<List<Note>> getAllNotesAsStream() {
+    return _queryAdapter.queryListStream('SELECT * FROM Note',
+        mapper: (Map<String, Object?> row) => Note(
+            row['id'] as int?,
+            row['title'] as String,
+            row['content'] as String,
+            _dateTimeConverter.decode(row['created_at'] as int),
+            _dateTimeConverter.decode(row['updated_at'] as int)),
+        queryableName: 'Note',
+        isView: false);
+  }
+
+  @override
+  Future<void> deleteNote(int noteId) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM Note WHERE id=?1', arguments: [noteId]);
+  }
+
+  @override
   Future<void> insertNote(Note note) async {
-    await _noteInsertionAdapter.insert(note, OnConflictStrategy.abort);
+    await _noteInsertionAdapter.insert(note, OnConflictStrategy.replace);
   }
 }
 

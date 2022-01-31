@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:tak_note/bloc/create_note_bloc.dart';
 import 'package:tak_note/db/database.dart';
 import 'package:tak_note/page/create_note_page.dart';
+import 'package:tak_note/page/notes_list_page.dart';
 import 'package:tak_note/routes.dart';
 import 'package:tak_note/service/note_service.dart';
+
+import 'bloc/notes_list_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final db = await $FloorAppDatabase.databaseBuilder('notedb.db').build();
   final noteService = NoteService(db);
-  final blocProvider = BlocProvider(createNoteBloc: CreateNoteBloc(noteService));
+  final blocProvider =
+      BlocProvider(createNoteBloc: CreateNoteBloc(noteService),
+      notesListBloc: NotesListBloc(noteService: noteService));
 
   runApp(AppContainer(blocProvider: blocProvider, child: TakeNoteApp()));
 }
@@ -21,13 +26,11 @@ class TakeNoteApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: CreateNotePage(),
-      initialRoute: '/create_note',
+      initialRoute: '/all_notes',
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }
-
 
 class AppContainer extends StatefulWidget {
   final Widget child;
@@ -74,6 +77,7 @@ class _InheritedAppState extends InheritedWidget {
 
 class BlocProvider {
   final CreateNoteBloc createNoteBloc;
+  final NotesListBloc notesListBloc;
 
-  BlocProvider({required this.createNoteBloc});
+  BlocProvider({required this.notesListBloc, required this.createNoteBloc});
 }

@@ -19,3 +19,8 @@ class NoteContentChanged extends NoteEvent{
 class CreateNote extends NoteEvent {
 }
 
+class DeleteNote extends NoteEvent {
+  int noteId;
+
+  DeleteNote({required this.noteId});
+}
