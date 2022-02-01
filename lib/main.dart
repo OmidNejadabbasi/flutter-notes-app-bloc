@@ -3,6 +3,7 @@ import 'package:tak_note/bloc/create_note_bloc.dart';
 import 'package:tak_note/db/database.dart';
 import 'package:tak_note/routes.dart';
 import 'package:tak_note/service/note_service.dart';
+import 'package:tak_note/theme.dart';
 
 import 'bloc/notes_list_bloc.dart';
 
@@ -23,7 +24,8 @@ class TakeNoteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: appTheme(),
       initialRoute: '/all_notes',
       onGenerateRoute: AppRouter.onGenerateRoute,
     );

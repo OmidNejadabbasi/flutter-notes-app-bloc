@@ -48,10 +48,10 @@ class NotesListPage extends StatelessWidget {
   Widget buildNoteListItem(Note note, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Color.fromARGB(255, 43, 142, 142)),
-        borderRadius: BorderRadius.all(Radius.circular(9)),
+        border: Border.all(color: const Color.fromARGB(255, 43, 142, 142)),
+        borderRadius: const BorderRadius.all(Radius.circular(9)),
       ),
-      margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
         child: Column(children: [
@@ -86,8 +86,8 @@ class NotesListPage extends StatelessWidget {
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
                 child: IconButton(
                   iconSize: 18,
-                  padding: EdgeInsets.all(8),
-                  constraints: BoxConstraints(),
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
                   onPressed: () {
                     notesListBloc?.noteEventSink
                         .add(DeleteNote(noteId: note.id ?? -1));

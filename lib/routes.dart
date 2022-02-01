@@ -9,7 +9,7 @@ class AppRouter {
   static Route? onGenerateRoute(RouteSettings settings) {
     switch(settings.name) {
       case "/create_note":
-        return MaterialPageRoute(builder: (context) => const CreateNotePage(),);
+        return MaterialPageRoute(builder: (context) => CreateNotePage(),);
 
       case "/all_notes":
         return MaterialPageRoute(builder: (context) => NotesListPage());
