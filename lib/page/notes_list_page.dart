@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
+import 'package:intl/intl.dart';
 import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/bloc/notes_list_bloc.dart';
 import 'package:tak_note/main.dart';
@@ -13,6 +16,7 @@ class NotesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     notesListBloc = AppContainer.blocProviderOf(context).notesListBloc;
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         title: Text('All Notes'),
       ),
@@ -48,12 +52,12 @@ class NotesListPage extends StatelessWidget {
   Widget buildNoteListItem(Note note, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color.fromARGB(255, 43, 142, 142)),
-        borderRadius: const BorderRadius.all(Radius.circular(9)),
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
       margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 14.0),
         child: Column(children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -64,19 +68,33 @@ class NotesListPage extends StatelessWidget {
                     Text(
                       note.title,
                       style: const TextStyle(
-                        fontFamily: 'Josefin',
-                        fontSize: 26,
-                        letterSpacing: -1,
+                        fontFamily: 'OpenSans',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
                         color: Color.fromARGB(255, 66, 66, 66),
                       ),
                     ),
-                    Text(
-                      note.content,
-                      style: const TextStyle(
-                        fontFamily: 'Adanda',
-                        color: Color.fromARGB(255, 160, 160, 160),
+                    const SizedBox(height: 5.0),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                      child: Text(
+                        _parseHtmlString(note.content) ?? "",
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 150, 150, 150),
+                        ),
                       ),
                     ),
+                    Text(
+                      DateFormat.yMMMMd('en_US').format(note.updatedAt),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'OpenSans',
+                        color: Color.fromARGB(255, 180, 180, 180),
+                      ),
+                    )
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),
@@ -104,4 +122,11 @@ class NotesListPage extends StatelessWidget {
       ),
     );
   }
+}
+
+String? _parseHtmlString(String htmlString) {
+  final document = parse(htmlString);
+  final String? parsedString = parse(document.body?.text).documentElement?.text;
+
+  return parsedString;
 }
