@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tak_note/bloc/create_note_bloc.dart';
+import 'package:tak_note/bloc/tags_list_bloc.dart';
 import 'package:tak_note/db/database.dart';
 import 'package:tak_note/routes.dart';
 import 'package:tak_note/service/note_service.dart';
+import 'package:tak_note/service/tags_service.dart';
 import 'package:tak_note/theme.dart';
 
 import 'bloc/notes_list_bloc.dart';
@@ -12,9 +14,12 @@ Future<void> main() async {
 
   final db = await $FloorAppDatabase.databaseBuilder('notedb.db').build();
   final noteService = NoteService(db);
-  final blocProvider =
-      BlocProvider(createNoteBloc: CreateNoteBloc(noteService),
-      notesListBloc: NotesListBloc(noteService: noteService));
+  final tagsService = TagsService(db);
+  final blocProvider = BlocProvider(
+    createNoteBloc: CreateNoteBloc(noteService, tagsService),
+    notesListBloc: NotesListBloc(noteService: noteService),
+    tagsListBloc: TagsListBloc(tagsService: tagsService),
+  );
 
   runApp(AppContainer(blocProvider: blocProvider, child: TakeNoteApp()));
 }
@@ -79,5 +84,10 @@ class BlocProvider {
   final CreateNoteBloc createNoteBloc;
   final NotesListBloc notesListBloc;
 
-  BlocProvider({required this.notesListBloc, required this.createNoteBloc});
+  final TagsListBloc tagsListBloc;
+
+  BlocProvider(
+      {required this.notesListBloc,
+      required this.createNoteBloc,
+      required this.tagsListBloc});
 }

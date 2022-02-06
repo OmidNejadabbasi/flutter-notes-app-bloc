@@ -4,8 +4,8 @@ import 'package:floor/floor.dart';
 @entity
 class Tag {
 
-  @primaryKey
-  final int id;
+  @PrimaryKey(autoGenerate: true)
+  int? id;
 
   final String name;
 

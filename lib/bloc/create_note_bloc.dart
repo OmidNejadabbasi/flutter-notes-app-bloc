@@ -6,6 +6,7 @@ import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/bloc/form_status.dart';
 import 'package:tak_note/models/note.dart';
 import 'package:tak_note/service/note_service.dart';
+import 'package:tak_note/service/tags_service.dart';
 
 class CreateNoteBloc {
 
@@ -18,15 +19,18 @@ class CreateNoteBloc {
   Stream<FormSubmissionStatus> get noteFormState => _noteState.stream;
 
   final NoteService noteService;
-  
-  CreateNoteBloc(this.noteService) {
+  final TagsService tagsService;
+
+  CreateNoteBloc(this.noteService, this.tagsService) {
     _noteEvent.stream.listen(_mapNoteEventToFormState);
 
 
     
   }
 
+  void addEvent(){
 
+  }
 
 
   void _mapNoteEventToFormState(NoteEvent event) async {

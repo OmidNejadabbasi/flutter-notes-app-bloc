@@ -20,6 +20,7 @@ class NotesListPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('All Notes'),
       ),
+      drawer: getDrawer(context),
       body: Column(
         children: [
           Expanded(
@@ -51,9 +52,9 @@ class NotesListPage extends StatelessWidget {
 
   Widget buildNoteListItem(Note note, BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
       child: Container(
@@ -119,6 +120,35 @@ class NotesListPage extends StatelessWidget {
             ],
           ),
         ]),
+      ),
+    );
+  }
+
+  Drawer getDrawer(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          const ListTile(
+            title: Text('Notes'),
+          ),
+          Container(
+            margin: EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+                border: Border.all(
+              color: Colors.black,
+              width: 1,
+            )),
+            child: ListTile(
+                title: Text(
+                  'Tags',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/tags');
+                }),
+          ),
+        ],
       ),
     );
   }

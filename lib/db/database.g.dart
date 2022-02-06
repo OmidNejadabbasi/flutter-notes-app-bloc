@@ -88,7 +88,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Tag` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Tag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `NoteTag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `note_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, FOREIGN KEY (`note_id`) REFERENCES `Note` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
@@ -175,7 +175,12 @@ class _$NoteDAO extends NoteDAO {
 
 class _$TagDAO extends TagDAO {
   _$TagDAO(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database, changeListener);
+      : _queryAdapter = QueryAdapter(database, changeListener),
+        _tagInsertionAdapter = InsertionAdapter(
+            database,
+            'Tag',
+            (Tag item) => <String, Object?>{'id': item.id, 'name': item.name},
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -183,13 +188,20 @@ class _$TagDAO extends TagDAO {
 
   final QueryAdapter _queryAdapter;
 
+  final InsertionAdapter<Tag> _tagInsertionAdapter;
+
   @override
-  Stream<Tag?> getAllTagsAsStream() {
-    return _queryAdapter.queryStream('SELECT * FROM Tag',
+  Stream<List<Tag>> getAllTagsAsStream() {
+    return _queryAdapter.queryListStream('SELECT * FROM Tag',
         mapper: (Map<String, Object?> row) =>
-            Tag(row['id'] as int, row['name'] as String),
+            Tag(row['id'] as int?, row['name'] as String),
         queryableName: 'Tag',
         isView: false);
+  }
+
+  @override
+  Future<void> insertTag(Tag tag) async {
+    await _tagInsertionAdapter.insert(tag, OnConflictStrategy.abort);
   }
 }
 

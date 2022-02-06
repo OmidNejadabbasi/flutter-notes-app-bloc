@@ -7,6 +7,9 @@ import 'package:tak_note/models/tag.dart';
 abstract class TagDAO {
 
   @Query("SELECT * FROM Tag")
-  Stream<Tag?> getAllTagsAsStream();
+  Stream<List<Tag>> getAllTagsAsStream();
+
+  @insert
+  Future<void> insertTag(Tag tag);
 
 }
