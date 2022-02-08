@@ -8,9 +8,8 @@ import 'package:tak_note/models/note.dart';
 import 'package:tak_note/service/note_service.dart';
 import 'package:tak_note/service/tags_service.dart';
 
-class CreateNoteBloc {
+class EditNoteBloc {
 
-  Note _note = Note(null, '', '', DateTime(1971), DateTime(1971));
 
   final StreamController<NoteEvent> _noteEvent = StreamController();
   Sink<NoteEvent> get noteEventSink => _noteEvent.sink;
@@ -20,10 +19,12 @@ class CreateNoteBloc {
 
   final NoteService noteService;
   final TagsService tagsService;
+  late final Note _note;
 
-  CreateNoteBloc(this.noteService, this.tagsService) {
+  EditNoteBloc(this.noteService, this.tagsService, Note note) {
     _noteEvent.stream.listen(_mapNoteEventToFormState);
 
+    _note = note;
 
     
   }
@@ -34,7 +35,7 @@ class CreateNoteBloc {
 
 
   void _mapNoteEventToFormState(NoteEvent event) async {
-    if (event is CreateNote) {
+    if (event is SaveNote) {
       _noteState.sink.add(FormSubmitting());
       try {
         await noteService.saveNote(_note);

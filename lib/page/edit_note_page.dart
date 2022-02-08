@@ -2,19 +2,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:tak_note/bloc/edit_note_bloc.dart';
 import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/main.dart';
 
-class CreateNotePage extends StatelessWidget {
-  CreateNotePage({Key? key}) : super(key: key);
+class EditNotePage extends StatelessWidget {
+  EditNotePage({Key? key, required this.editNoteBloc}) : super(key: key);
 
   final HtmlEditorController _controller = HtmlEditorController();
 
+  final EditNoteBloc editNoteBloc;
   @override
   Widget build(BuildContext context) {
-    final createNoteBloc = AppContainer
-        .blocProviderOf(context)
-        .createNoteBloc;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +26,7 @@ class CreateNotePage extends StatelessWidget {
             children: [
               TextFormField(
                 onChanged: (value) {
-                  createNoteBloc.noteEventSink.add(NoteTitleChanged(value));
+                  editNoteBloc.noteEventSink.add(NoteTitleChanged(value));
                 },
                 style: Theme
                     .of(context)
@@ -61,9 +60,9 @@ class CreateNotePage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // send create note signal
-                  createNoteBloc.noteEventSink
+                  editNoteBloc.noteEventSink
                       .add(NoteContentChanged(await _controller.getText()));
-                  createNoteBloc.noteEventSink.add(CreateNote());
+                  editNoteBloc.noteEventSink.add(SaveNote());
                 },
                 child: const Text('Save'),
               )

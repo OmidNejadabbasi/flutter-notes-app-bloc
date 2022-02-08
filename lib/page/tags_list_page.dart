@@ -45,7 +45,7 @@ class _TagsListPageState extends State<TagsListPage> {
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {
                     debugPrint("tag list builder called");
-                    return buildTagListItem(snapshot.data![index]);
+                    return buildTagListItem(snapshot.data![index], context);
                   },
                 );
               },
@@ -139,13 +139,14 @@ class _TagsListPageState extends State<TagsListPage> {
     );
   }
 
-  Widget buildTagListItem(Tag data) {
+  Widget buildTagListItem(Tag data, BuildContext context) {
     var noteCountForTag = tagsListBloc!.getNoteCountForTag(data.id!);
     return Container(
-      margin: const EdgeInsets.all(4),
-      padding: const EdgeInsets.all(5),
-      decoration: const BoxDecoration(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
         color: Colors.white,
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Row(
@@ -154,8 +155,9 @@ class _TagsListPageState extends State<TagsListPage> {
           Text(
             data.name,
             style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 16
+              color: Color.fromARGB(255, 29, 29, 29),
+              fontFamily: 'ZillaSlab',
+              fontSize: 16,
             ),
           ),
           Text(
@@ -163,8 +165,9 @@ class _TagsListPageState extends State<TagsListPage> {
                 ? "$noteCountForTag Notes"
                 : "$noteCountForTag Note",
             style: const TextStyle(
-              color: Colors.black12,
-              fontSize: 12
+              color: Colors.black54,
+              fontFamily: 'Andada',
+              fontSize: 12,
             ),
           )
         ],

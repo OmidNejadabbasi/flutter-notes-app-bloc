@@ -41,7 +41,7 @@ class NotesListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed('/create_note');
+          Navigator.of(context).pushNamed('/edit_note');
         },
         child: const Icon(
           Icons.add,

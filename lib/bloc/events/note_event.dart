@@ -15,7 +15,7 @@ class NoteContentChanged extends NoteEvent{
   NoteContentChanged(this.noteContent);
 }
 
-class CreateNote extends NoteEvent {
+class SaveNote extends NoteEvent {
 }
 
 class DeleteNote extends NoteEvent {
