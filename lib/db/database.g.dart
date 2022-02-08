@@ -93,7 +93,7 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `NoteTag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `note_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, FOREIGN KEY (`note_id`) REFERENCES `Note` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await database.execute(
-            'CREATE VIEW IF NOT EXISTS `tagNoteCount` AS SELECT tag_id, c.count FROM Tag \nLEFT JOIN (SELECT COUNT(*) count, tag_id FROM NoteTag GROUP BY tag_id) c\nON Tag.tag_id=c.tag_id');
+            'CREATE VIEW IF NOT EXISTS `TagNoteCount` AS SELECT Tag.id AS tag_id, IFNULL(c.count, 0) AS noteCount FROM Tag \nLEFT JOIN (SELECT COUNT(*) count, tag_id FROM NoteTag GROUP BY tag_id) c\nON Tag.id=c.tag_id');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -204,9 +204,9 @@ class _$TagDAO extends TagDAO {
 
   @override
   Future<List<TagNoteCount>> getNoteCountOfEachTag() async {
-    return _queryAdapter.queryList('SELECT * FROM tagNoteCount',
+    return _queryAdapter.queryList('SELECT * FROM TagNoteCount',
         mapper: (Map<String, Object?> row) =>
-            TagNoteCount(row['Tag.tag_id'] as int, row['c.count'] as int));
+            TagNoteCount(row['tag_id'] as int, row['noteCount'] as int));
   }
 
   @override

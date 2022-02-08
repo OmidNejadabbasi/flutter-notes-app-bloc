@@ -1,16 +1,15 @@
-
 import 'package:floor/floor.dart';
 
 @DatabaseView(
-    """SELECT tag_id, c.count FROM Tag 
+    """SELECT Tag.id AS tag_id, IFNULL(c.count, 0) AS noteCount FROM Tag 
 LEFT JOIN (SELECT COUNT(*) count, tag_id FROM NoteTag GROUP BY tag_id) c
-ON Tag.tag_id=c.tag_id""", viewName: 'tagNoteCount')
+ON Tag.id=c.tag_id""",
+    viewName: 'TagNoteCount')
 class TagNoteCount {
-
-  @ColumnInfo(name: "Tag.tag_id")
+  @ColumnInfo(name: "tag_id")
   final int tagID;
 
-  @ColumnInfo(name: 'c.count')
+  @ColumnInfo(name: 'noteCount')
   final int noteCount;
 
   TagNoteCount(this.tagID, this.noteCount);

@@ -13,7 +13,7 @@ abstract class TagDAO {
   @insert
   Future<void> insertTag(Tag tag);
 
-  @Query('SELECT * FROM tagNoteCount')
+  @Query('SELECT * FROM TagNoteCount')
   Future<List<TagNoteCount>> getNoteCountOfEachTag();
 
 }
