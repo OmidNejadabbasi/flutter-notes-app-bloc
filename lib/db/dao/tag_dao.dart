@@ -2,6 +2,7 @@
 
 import 'package:floor/floor.dart';
 import 'package:tak_note/models/tag.dart';
+import 'package:tak_note/models/tag_note_count_view.dart';
 
 @dao
 abstract class TagDAO {
@@ -11,5 +12,8 @@ abstract class TagDAO {
 
   @insert
   Future<void> insertTag(Tag tag);
+
+  @Query('SELECT * FROM tagNoteCount')
+  Future<List<TagNoteCount>> getNoteCountOfEachTag();
 
 }

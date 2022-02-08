@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:tak_note/bloc/tags_list_bloc.dart';
 import 'package:tak_note/main.dart';
 import 'package:tak_note/models/tag.dart';
@@ -43,6 +44,7 @@ class _TagsListPageState extends State<TagsListPage> {
                 return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {
+                    debugPrint("tag list builder called");
                     return buildTagListItem(snapshot.data?[index]);
                   },
                 );
@@ -89,7 +91,7 @@ class _TagsListPageState extends State<TagsListPage> {
               final tagFieldKey = GlobalKey<FormFieldState>();
               return Dialog(
                 child: Container(
-                  margin: EdgeInsets.all(12.0),
+                  margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -106,19 +108,23 @@ class _TagsListPageState extends State<TagsListPage> {
                           return (value ?? "").isEmpty ? "Can't be null" : null;
                         },
                       ),
-                      ButtonBar(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('CANCEL'),
+                            child: const Text('CANCEL'),
                           ),
                           TextButton(
                             onPressed: () {
-                              if (tagFieldKey.currentState!.validate()) {}
+                              if (tagFieldKey.currentState!.validate()) {
+                                tagsListBloc?.saveTag(newTag);
+                                Navigator.pop(context);
+                              }
                             },
-                            child: Text('SAVE'),
+                            child: const Text('SAVE'),
                           )
                         ],
                       )
@@ -135,11 +141,24 @@ class _TagsListPageState extends State<TagsListPage> {
 
   Widget buildTagListItem(Tag? data) {
     return Container(
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(5),
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-      child: Text(data!.name),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            data!.name,
+            style: TextStyle(
+              color: Colors.black54
+            ),
+          ),
+          Text(data.notesCount > 1?'${data.notesCount} Notes': '${data.notesCount} Note')
+        ],
+      ),
     );
   }
 }

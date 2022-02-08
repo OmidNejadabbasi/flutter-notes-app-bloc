@@ -14,5 +14,10 @@ abstract class NoteTagDAO {
   @Query("SELECT * FROM NoteTag WHERE tag_id= :tagId")
   Future<List<NoteTag>> getNotesForTag(int tagId);
 
+  @Query("SELECT COUNT(*) FROM NoteTag GROUP BY tag_id")
+  Future<Map<int, int>?> getNotesCountOfTag();
+
+  @insert
+  Future<void> addTagToNote(NoteTag noteTag);
 
 }

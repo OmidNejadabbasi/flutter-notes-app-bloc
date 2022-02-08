@@ -92,6 +92,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `NoteTag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `note_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, FOREIGN KEY (`note_id`) REFERENCES `Note` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
+        await database.execute(
+            'CREATE VIEW IF NOT EXISTS `tagNoteCount` AS SELECT tag_id, c.count FROM Tag \nLEFT JOIN (SELECT COUNT(*) count, tag_id FROM NoteTag GROUP BY tag_id) c\nON Tag.tag_id=c.tag_id');
+
         await callback?.onCreate?.call(database, version);
       },
     );
@@ -200,6 +203,13 @@ class _$TagDAO extends TagDAO {
   }
 
   @override
+  Future<List<TagNoteCount>> getNoteCountOfEachTag() async {
+    return _queryAdapter.queryList('SELECT * FROM tagNoteCount',
+        mapper: (Map<String, Object?> row) =>
+            TagNoteCount(row['Tag.tag_id'] as int, row['c.count'] as int));
+  }
+
+  @override
   Future<void> insertTag(Tag tag) async {
     await _tagInsertionAdapter.insert(tag, OnConflictStrategy.abort);
   }
@@ -207,13 +217,23 @@ class _$TagDAO extends TagDAO {
 
 class _$NoteTagDAO extends NoteTagDAO {
   _$NoteTagDAO(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database);
+      : _queryAdapter = QueryAdapter(database),
+        _noteTagInsertionAdapter = InsertionAdapter(
+            database,
+            'NoteTag',
+            (NoteTag item) => <String, Object?>{
+                  'id': item.id,
+                  'note_id': item.noteId,
+                  'tag_id': item.tagId
+                });
 
   final sqflite.DatabaseExecutor database;
 
   final StreamController<String> changeListener;
 
   final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<NoteTag> _noteTagInsertionAdapter;
 
   @override
   Future<List<NoteTag>> getTagsForNote(int noteId) async {
@@ -229,6 +249,17 @@ class _$NoteTagDAO extends NoteTagDAO {
         mapper: (Map<String, Object?> row) => NoteTag(
             row['note_id'] as int, row['tag_id'] as int, row['id'] as int),
         arguments: [tagId]);
+  }
+
+  @override
+  Future<Map<int, int>?> getNotesCountOfTag() async {
+    await _queryAdapter
+        .queryNoReturn('SELECT COUNT(*) FROM NoteTag GROUP BY tag_id');
+  }
+
+  @override
+  Future<void> addTagToNote(NoteTag noteTag) async {
+    await _noteTagInsertionAdapter.insert(noteTag, OnConflictStrategy.abort);
   }
 }
 

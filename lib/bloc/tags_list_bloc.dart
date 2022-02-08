@@ -10,6 +10,7 @@ class TagsListBloc {
 
   TagsListBloc({required this.tagsService}) {
     tagsService.getAllTags().listen((tagsList) {
+      debugPrint('New tag inserted to the database');
       _tagsStream.add(tagsList);
     });
   }
@@ -18,6 +19,9 @@ class TagsListBloc {
   Stream<List<Tag>> get tagsStream => _tagsStream.stream;
   
 
+  void saveTag(Tag newTag) {
+     tagsService.insertTag(newTag);
+  }
 
 
   void dispose() {

@@ -7,6 +7,7 @@ import 'package:tak_note/models/note.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:tak_note/models/note_tag.dart';
 import 'package:tak_note/models/tag.dart';
+import 'package:tak_note/models/tag_note_count_view.dart';
 
 
 part 'database.g.dart';
@@ -15,7 +16,7 @@ part 'database.g.dart';
 @TypeConverters([
   DateTimeConverter
 ])
-@Database(version: 1, entities: [Note, Tag, NoteTag])
+@Database(version: 1, entities: [Note, Tag, NoteTag], views: [TagNoteCount])
 abstract class AppDatabase extends FloorDatabase {
   NoteDAO get noteDAO;
   TagDAO get tagDAO;
