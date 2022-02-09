@@ -18,6 +18,6 @@ abstract class NoteTagDAO {
   Future<Map<int, int>?> getNotesCountOfTag();
 
   @insert
-  Future<void> addTagToNote(NoteTag noteTag);
+  Future<int> addTagToNote(NoteTag noteTag);
 
 }

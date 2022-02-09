@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:tak_note/bloc/edit_note_bloc.dart';
+import 'package:tak_note/bloc/events/add_tag_to_note_event.dart';
 import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/models/tag.dart';
 
@@ -64,7 +65,7 @@ class _EditNotePageState extends State<EditNotePage> {
               ),
               ChipsInput(
                 chipBuilder: (context, state, dynamic data) {
-
+                  widget.editNoteBloc.addTagToNote(AddTagToNote(data.id));
                   return InputChip(
                     key: ObjectKey(data.name),
                     label: Text(data.name),
@@ -74,6 +75,10 @@ class _EditNotePageState extends State<EditNotePage> {
                 },
                 suggestionBuilder: (context, state, dynamic data) {
                   return Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                    ),
                     key: ObjectKey(data.name),
                     child: TextButton(
 

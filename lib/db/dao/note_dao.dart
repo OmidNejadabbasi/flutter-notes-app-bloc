@@ -13,7 +13,7 @@ abstract class NoteDAO {
   Stream<List<Note>> getAllNotesAsStream();
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertNote(Note note);
+  Future<int> insertNote(Note note);
 
   @Query("DELETE FROM Note WHERE id=:noteId")
   Future<void> deleteNote(int noteId);

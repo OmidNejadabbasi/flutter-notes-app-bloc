@@ -6,17 +6,19 @@ import 'package:tak_note/models/tag.dart';
   ForeignKey(
     childColumns: ['note_id'],
     parentColumns: ['id'],
+    onDelete: ForeignKeyAction.cascade,
     entity: Note,
   ),
   ForeignKey(
     childColumns: ['tag_id'],
     parentColumns: ['id'],
+    onDelete: ForeignKeyAction.cascade,
     entity: Tag,
   )
 ])
 class NoteTag {
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
 
   @ColumnInfo(name: "note_id")
   final int noteId;

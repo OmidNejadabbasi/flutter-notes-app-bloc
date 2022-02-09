@@ -90,7 +90,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Tag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `NoteTag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `note_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, FOREIGN KEY (`note_id`) REFERENCES `Note` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `NoteTag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `note_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, FOREIGN KEY (`note_id`) REFERENCES `Note` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `Tag` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await database.execute(
             'CREATE VIEW IF NOT EXISTS `TagNoteCount` AS SELECT Tag.id AS tag_id, IFNULL(c.count, 0) AS noteCount FROM Tag \nLEFT JOIN (SELECT COUNT(*) count, tag_id FROM NoteTag GROUP BY tag_id) c\nON Tag.id=c.tag_id');
@@ -171,8 +171,9 @@ class _$NoteDAO extends NoteDAO {
   }
 
   @override
-  Future<void> insertNote(Note note) async {
-    await _noteInsertionAdapter.insert(note, OnConflictStrategy.replace);
+  Future<int> insertNote(Note note) {
+    return _noteInsertionAdapter.insertAndReturnId(
+        note, OnConflictStrategy.replace);
   }
 }
 
@@ -239,7 +240,7 @@ class _$NoteTagDAO extends NoteTagDAO {
   Future<List<NoteTag>> getTagsForNote(int noteId) async {
     return _queryAdapter.queryList('SELECT * FROM NoteTag WHERE note_id = ?1',
         mapper: (Map<String, Object?> row) => NoteTag(
-            row['note_id'] as int, row['tag_id'] as int, row['id'] as int),
+            row['note_id'] as int, row['tag_id'] as int, row['id'] as int?),
         arguments: [noteId]);
   }
 
@@ -247,7 +248,7 @@ class _$NoteTagDAO extends NoteTagDAO {
   Future<List<NoteTag>> getNotesForTag(int tagId) async {
     return _queryAdapter.queryList('SELECT * FROM NoteTag WHERE tag_id= ?1',
         mapper: (Map<String, Object?> row) => NoteTag(
-            row['note_id'] as int, row['tag_id'] as int, row['id'] as int),
+            row['note_id'] as int, row['tag_id'] as int, row['id'] as int?),
         arguments: [tagId]);
   }
 
@@ -258,8 +259,9 @@ class _$NoteTagDAO extends NoteTagDAO {
   }
 
   @override
-  Future<void> addTagToNote(NoteTag noteTag) async {
-    await _noteTagInsertionAdapter.insert(noteTag, OnConflictStrategy.abort);
+  Future<int> addTagToNote(NoteTag noteTag) {
+    return _noteTagInsertionAdapter.insertAndReturnId(
+        noteTag, OnConflictStrategy.abort);
   }
 }
 

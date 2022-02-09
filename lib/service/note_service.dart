@@ -1,6 +1,7 @@
 
 import 'package:tak_note/db/database.dart';
 import 'package:tak_note/models/note.dart';
+import 'package:tak_note/models/note_tag.dart';
 
 class NoteService {
   late AppDatabase _db;
@@ -8,7 +9,7 @@ class NoteService {
     _db = db;
   }
 
-  Future<void> saveNote(Note note){
+  Future<int> saveNote(Note note){
     return _db.noteDAO.insertNote(note);
   }
 
@@ -22,6 +23,10 @@ class NoteService {
 
   void deleteNote(int noteId) {
     _db.noteDAO.deleteNote(noteId);
+  }
+
+  Future<int> addTagToNote(int noteId, int tagId){
+    return _db.noteTagDAO.addTagToNote(NoteTag(noteId, tagId, null));
   }
 
 }

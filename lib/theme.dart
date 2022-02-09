@@ -4,6 +4,7 @@ ThemeData appTheme() {
   ThemeData base = ThemeData.light();
 
   return base.copyWith(
+    primaryColor: Colors.pink,
     textTheme: const TextTheme(
       subtitle2: TextStyle(
         fontFamily: 'Adanda',
