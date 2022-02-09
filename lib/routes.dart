@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tak_note/bloc/edit_note_bloc.dart';
+import 'package:tak_note/bloc/notes_list_bloc.dart';
+import 'package:tak_note/bloc/tags_list_bloc.dart';
 import 'package:tak_note/db/database.dart';
 import 'package:tak_note/models/note.dart';
 import 'package:tak_note/page/edit_note_page.dart';
@@ -29,8 +31,8 @@ class AppConfiguration {
                   settings.arguments as Note,
                 ),
               )),
-      "/all_notes": MaterialPageRoute(builder: (context) => NotesListPage()),
-      "/tags": MaterialPageRoute(builder: (context) => TagsListPage()),
+      "/all_notes": MaterialPageRoute(builder: (context) => NotesListPage(notesListBloc: NotesListBloc(noteService: noteService),)),
+      "/tags": MaterialPageRoute(builder: (context) => TagsListPage(tagsListBloc: TagsListBloc(tagsService: tagsService),)),
     };
     return routeMap[settings.name];
   }

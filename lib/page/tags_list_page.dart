@@ -6,26 +6,26 @@ import 'package:tak_note/main.dart';
 import 'package:tak_note/models/tag.dart';
 
 class TagsListPage extends StatefulWidget {
-  TagsListPage({Key? key}) : super(key: key);
+  TagsListPage({Key? key, required this.tagsListBloc}) : super(key: key);
+
+  TagsListBloc tagsListBloc;
 
   @override
   State<TagsListPage> createState() => _TagsListPageState();
 }
 
 class _TagsListPageState extends State<TagsListPage> {
-  TagsListBloc? tagsListBloc;
 
   @override
   void dispose() {
     super.dispose();
 
-    tagsListBloc?.dispose();
+    widget.tagsListBloc.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    tagsListBloc = AppContainer.blocProviderOf(context).tagsListBloc;
   }
 
   @override
@@ -38,7 +38,7 @@ class _TagsListPageState extends State<TagsListPage> {
         children: [
           Expanded(
             child: StreamBuilder<List<Tag>>(
-              stream: tagsListBloc?.tagsStream,
+              stream: widget.tagsListBloc.tagsStream,
               initialData: const [],
               builder: (context, snapshot) {
                 return ListView.builder(
@@ -120,7 +120,7 @@ class _TagsListPageState extends State<TagsListPage> {
                           TextButton(
                             onPressed: () {
                               if (tagFieldKey.currentState!.validate()) {
-                                tagsListBloc?.saveTag(newTag);
+                                widget.tagsListBloc.saveTag(newTag);
                                 Navigator.pop(context);
                               }
                             },
@@ -140,7 +140,7 @@ class _TagsListPageState extends State<TagsListPage> {
   }
 
   Widget buildTagListItem(Tag data, BuildContext context) {
-    var noteCountForTag = tagsListBloc!.getNoteCountForTag(data.id!);
+    var noteCountForTag = widget.tagsListBloc.getNoteCountForTag(data.id!);
     return Container(
       margin: const EdgeInsets.all(12),
       padding: const EdgeInsets.all(16),

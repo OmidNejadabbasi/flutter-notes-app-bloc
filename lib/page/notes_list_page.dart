@@ -8,13 +8,12 @@ import 'package:tak_note/main.dart';
 import 'package:tak_note/models/note.dart';
 
 class NotesListPage extends StatelessWidget {
-  NotesListPage({Key? key}) : super(key: key);
+  NotesListPage({Key? key, required this.notesListBloc}) : super(key: key);
 
-  NotesListBloc? notesListBloc = null;
+  NotesListBloc notesListBloc;
 
   @override
   Widget build(BuildContext context) {
-    notesListBloc = AppContainer.blocProviderOf(context).notesListBloc;
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
