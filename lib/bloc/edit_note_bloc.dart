@@ -2,9 +2,11 @@
 
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
 import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/bloc/form_status.dart';
 import 'package:tak_note/models/note.dart';
+import 'package:tak_note/models/tag.dart';
 import 'package:tak_note/service/note_service.dart';
 import 'package:tak_note/service/tags_service.dart';
 
@@ -19,9 +21,21 @@ class EditNoteBloc {
 
   final NoteService noteService;
   final TagsService tagsService;
-  late final Note _note;
+  late Note _note;
+
+  List<Tag> _tagList = <Tag>[];
+
+  final BehaviorSubject<List<Tag>> _tagsStream = BehaviorSubject();
+  Stream<List<Tag>> get tagsStream => _tagsStream.stream;
 
   EditNoteBloc(this.noteService, this.tagsService, Note note) {
+
+    tagsService.getAllTags().listen((tagList) { 
+      _tagList = tagList;
+      _tagsStream.add(_tagList);
+    });
+
+
     _noteEvent.stream.listen(_mapNoteEventToFormState);
 
     _note = note;
@@ -44,9 +58,9 @@ class EditNoteBloc {
         _noteState.sink.add(SubmissionFailed(Exception("Form could not be submitted")));
       }
     } else if (event is NoteTitleChanged) {
-      _note = Note(null, event.noteTitle, _note.content, _note.createdAt, DateTime.now());
+      _note = Note(_note.id, event.noteTitle, _note.content, _note.createdAt, DateTime.now());
     } else if(event is NoteContentChanged) {
-      _note = Note(null, _note.title, event.noteContent, _note.createdAt, DateTime.now());
+      _note = Note(_note.id, _note.title, event.noteContent, _note.createdAt, DateTime.now());
     }
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tak_note/bloc/edit_note_bloc.dart';
 import 'package:tak_note/bloc/tags_list_bloc.dart';
 import 'package:tak_note/db/database.dart';
-import 'package:tak_note/routes.dart';
+import 'package:tak_note/config.dart';
 import 'package:tak_note/service/note_service.dart';
 import 'package:tak_note/service/tags_service.dart';
 import 'package:tak_note/theme.dart';

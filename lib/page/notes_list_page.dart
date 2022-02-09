@@ -4,7 +4,6 @@ import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:tak_note/bloc/events/note_event.dart';
 import 'package:tak_note/bloc/notes_list_bloc.dart';
-import 'package:tak_note/main.dart';
 import 'package:tak_note/models/note.dart';
 
 class NotesListPage extends StatelessWidget {
@@ -24,7 +23,7 @@ class NotesListPage extends StatelessWidget {
         children: [
           Expanded(
             child: StreamBuilder<List<Note>>(
-              stream: notesListBloc?.notesListStream,
+              stream: notesListBloc.notesListStream,
               initialData: const [],
               builder: (context, snapshot) {
                 return ListView.builder(
@@ -40,7 +39,8 @@ class NotesListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed('/edit_note');
+          Navigator.of(context).pushNamed('/edit_note',
+              arguments: Note(null, '', '', DateTime.now(), DateTime.now()));
         },
         child: const Icon(
           Icons.add,
@@ -107,7 +107,7 @@ class NotesListPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   constraints: const BoxConstraints(),
                   onPressed: () {
-                    notesListBloc?.noteEventSink
+                    notesListBloc.noteEventSink
                         .add(DeleteNote(noteId: note.id ?? -1));
                   },
                   icon: Icon(
@@ -133,11 +133,11 @@ class NotesListPage extends StatelessWidget {
           Container(
             margin: EdgeInsets.all(3),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
+                borderRadius: BorderRadius.all(Radius.circular(5)),
                 border: Border.all(
-              color: Colors.black,
-              width: 1,
-            )),
+                  color: Colors.black,
+                  width: 1,
+                )),
             child: ListTile(
                 title: Text(
                   'Tags',
